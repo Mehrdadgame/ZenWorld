@@ -23,12 +23,28 @@
                         sans: ['Vazirmatn', 'sans-serif'],
                     },
                     colors: {
-                        darkBg: '#0f172a',
-                        cardBg: '#1e293b',
-                        accentGreen: '#10B981',
-                        accentPurple: '#8B5CF6',
-                        accentBlue: '#3B82F6',
-                        accentGold: '#F59E0B'
+                        darkBg: '#0B0F19',
+                        cardBg: '#151E32',
+                        accentGreen: '#00F0FF',
+                        accentPurple: '#BD00FF',
+                        accentGold: '#FFD700'
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: 0, transform: 'translateY(40px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
@@ -37,258 +53,240 @@
     
     <style>
         body {
-            background-color: #0f172a;
+            background-color: #0B0F19;
             color: #e2e8f0;
-            background-image: radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-                              radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
-            background-attachment: fixed;
+            overflow-x: hidden;
         }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        
+        .glass-morphism {
+            background: rgba(21, 30, 50, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
+
+        .gradient-text {
+            background: linear-gradient(to right, #00F0FF, #0088FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .cost-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.85rem;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        .cost-row:hover {
+            background: rgba(255,255,255,0.02);
+            padding-left: 8px;
+            padding-right: 8px;
+            border-radius: 6px;
         }
         .cost-row:last-child {
             border-bottom: none;
         }
-        .gradient-text {
-            background: linear-gradient(to right, #4ade80, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        .call-btn-glow {
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transition: all 0.3s ease;
         }
-        /* افکت نئون برای قیمت‌ها */
-        .neon-text {
-            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        .call-btn-glow:hover {
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.8);
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body class="font-sans antialiased min-h-screen pb-20">
+<body class="font-sans antialiased min-h-screen pb-24 relative selection:bg-accentGreen selection:text-black">
+
+    <!-- پس‌زمینه متحرک -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-green-600/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    </div>
 
     <!-- Header -->
-    <header class="relative pt-10 pb-12 overflow-hidden">
-        <div class="container mx-auto px-4 relative z-10 text-center">
-            <div class="inline-flex items-center justify-center space-x-3 space-x-reverse mb-4 bg-gray-800/50 px-4 py-2 rounded-full border border-gray-700">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-sm font-medium text-gray-300">نسخه نهایی</span>
+    <header class="relative pt-16 pb-20 text-center">
+        <div class="container mx-auto px-4 z-10 relative">
+            <div class="inline-block animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="inline-flex items-center justify-center space-x-3 space-x-reverse mb-6 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
+                    <span class="w-2.5 h-2.5 rounded-full bg-accentGreen shadow-[0_0_10px_#00F0FF] animate-pulse"></span>
+                    <span class="text-sm font-medium text-gray-300">نسخه نهایی</span>
+                </div>
             </div>
-            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
-                پیشنهاد فنی و مالی <span class="gradient-text">ZenWorld</span>
+            
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight animate-slide-up" style="animation-delay: 0.2s;">
+                پیشنهاد <span class="gradient-text">ZenWorld</span>
             </h1>
-            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-                تحلیل جامع سناریوهای توسعه کلاینت با جزئیات کامل هزینه‌ها
+            
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10 animate-slide-up" style="animation-delay: 0.3s;">
+                برنامه‌ریزی دقیق برای ساخت کلاینت بازی با تمرکز بر سرعت و کیفیت
             </p>
             
-            <!-- دکمه تماس (مخصوص موبایل) -->
-            <a href="tel:09212795139" class="inline-flex items-center gap-2 bg-accentGreen text-black font-bold py-3 px-8 rounded-full hover:bg-green-400 transition transform hover:scale-105 shadow-lg shadow-green-900/50">
-                <i class="fa-solid fa-phone"></i>
-                تماس مستقیم با مدیر پروژه
-            </a>
+            <div class="animate-slide-up" style="animation-delay: 0.4s;">
+                <a href="tel:09212795139" class="call-btn-glow inline-flex items-center gap-3 bg-white text-black font-bold py-4 px-10 rounded-full text-lg">
+                    <i class="fa-solid fa-phone-volume text-accentGreen"></i>
+                    <span dir="ltr">0921 279 5139</span>
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 -mt-6 space-y-16">
+    <main class="container mx-auto px-4 space-y-24">
 
-        <!-- بخش نمونه کارها -->
-        <section>
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold text-white flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-earth-americas text-accentBlue"></i>
-                    تجربه بین‌المللی ما
-                </h2>
-                <p class="text-gray-400 text-sm mt-2">نمونه کارهای موفق تیم در مقیاس جهانی</p>
+        <!-- Portfolio Section -->
+        <section class="reveal">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-1 flex-grow bg-gradient-to-l from-transparent to-gray-700"></div>
+                <h2 class="text-2xl font-bold text-white whitespace-nowrap"><i class="fa-solid fa-earth-americas text-accentGreen ml-2"></i>نمونه کارهای بین‌المللی</h2>
+                <div class="h-1 flex-grow bg-gradient-to-r from-transparent to-gray-700"></div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Portfolio 1 -->
-                <a href="https://play.google.com/store/apps/details?id=com.jawaker.tarneeb&hl=en" target="_blank" class="glass-panel p-6 rounded-2xl flex flex-col items-center hover:bg-gray-800 transition duration-300 group border-l-4 border-green-500">
-                    <div class="w-16 h-16 bg-gray-700 rounded-2xl mb-4 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                        <i class="fa-brands fa-google-play text-green-400"></i>
+                <!-- Card 1 -->
+                <a href="https://play.google.com/store/apps/details?id=com.jawaker.tarneeb&hl=en" target="_blank" class="group glass-morphism p-1 rounded-3xl hover:bg-gray-800 transition-all duration-500 hover:-translate-y-2">
+                    <div class="bg-cardBg rounded-[20px] p-6 h-full flex flex-col items-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                        <i class="fa-brands fa-google-play text-5xl text-gray-600 group-hover:text-green-400 mb-4 transition duration-300"></i>
+                        <h3 class="font-bold text-xl text-white z-10">Jawaker Tarneeb</h3>
+                        <p class="text-gray-400 text-sm text-center mt-2 z-10">پلتفرم میلیونی خاورمیانه</p>
                     </div>
-                    <h3 class="font-bold text-lg text-white">Jawaker Tarneeb</h3>
-                    <p class="text-gray-400 text-xs text-center mt-2">یکی از بزرگترین پلتفرم‌های بازی در خاورمیانه</p>
+                </a>
+                
+                <!-- Card 2 -->
+                <a href="https://apps.apple.com/us/app/tarneeb-41-cards-board/id406385949" target="_blank" class="group glass-morphism p-1 rounded-3xl hover:bg-gray-800 transition-all duration-500 hover:-translate-y-2">
+                    <div class="bg-cardBg rounded-[20px] p-6 h-full flex flex-col items-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                        <i class="fa-brands fa-apple text-5xl text-gray-600 group-hover:text-white mb-4 transition duration-300"></i>
+                        <h3 class="font-bold text-xl text-white z-10">Tarneeb 41</h3>
+                        <p class="text-gray-400 text-sm text-center mt-2 z-10">موفقیت جهانی در iOS</p>
+                    </div>
                 </a>
 
-                <!-- Portfolio 2 -->
-                <a href="https://apps.apple.com/us/app/tarneeb-41-cards-board/id406385949" target="_blank" class="glass-panel p-6 rounded-2xl flex flex-col items-center hover:bg-gray-800 transition duration-300 group border-l-4 border-gray-400">
-                    <div class="w-16 h-16 bg-gray-700 rounded-2xl mb-4 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                        <i class="fa-brands fa-apple text-white"></i>
+                <!-- Card 3 -->
+                <a href="https://cafebazaar.ir/app/com.Avaenoo.ShabihKhan?l=en" target="_blank" class="group glass-morphism p-1 rounded-3xl hover:bg-gray-800 transition-all duration-500 hover:-translate-y-2">
+                    <div class="bg-cardBg rounded-[20px] p-6 h-full flex flex-col items-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                        <i class="fa-solid fa-store text-5xl text-gray-600 group-hover:text-yellow-400 mb-4 transition duration-300"></i>
+                        <h3 class="font-bold text-xl text-white z-10">ShabihKhan</h3>
+                        <p class="text-gray-400 text-sm text-center mt-2 z-10">نمونه موفق بازار داخلی</p>
                     </div>
-                    <h3 class="font-bold text-lg text-white">Tarneeb 41</h3>
-                    <p class="text-gray-400 text-xs text-center mt-2">موفقیت در مارکت App Store (iOS Global)</p>
-                </a>
-
-                <!-- Portfolio 3 -->
-                <a href="https://cafebazaar.ir/app/com.Avaenoo.ShabihKhan?l=en" target="_blank" class="glass-panel p-6 rounded-2xl flex flex-col items-center hover:bg-gray-800 transition duration-300 group border-l-4 border-accentGold">
-                    <div class="w-16 h-16 bg-gray-700 rounded-2xl mb-4 flex items-center justify-center text-3xl group-hover:scale-110 transition">
-                        <i class="fa-solid fa-store text-accentGold"></i>
-                    </div>
-                    <h3 class="font-bold text-lg text-white">ShabihKhan</h3>
-                    <p class="text-gray-400 text-xs text-center mt-2">نمونه موفق داخلی با گرافیک جذاب</p>
                 </a>
             </div>
         </section>
 
-        <!-- بخش سناریوها با جزئیات مالی -->
+        <!-- Scenarios Section -->
         <section>
-            <div class="flex items-center justify-between mb-8 border-b border-gray-700 pb-4">
-                <h2 class="text-2xl md:text-3xl font-bold text-white">تحلیل دقیق هزینه‌ها</h2>
-                <span class="text-xs md:text-sm text-gray-400">برآورد ریالی (تومان)</span>
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-2">سناریوهای اجرایی</h2>
+                <p class="text-gray-400">تحلیل هزینه و زمان بدون هزینه‌های سربار مدیریت</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
-                <!-- سناریو ۱: دوبعدی -->
-                <div class="glass-panel rounded-3xl overflow-hidden flex flex-col hover:border-gray-500 transition-all duration-300">
-                    <div class="p-5 bg-gradient-to-l from-gray-800 to-gray-900 border-b border-gray-700">
-                        <h3 class="text-xl font-bold text-white">سناریو ۱: دوبعدی (2D)</h3>
-                        <p class="text-xs text-gray-400 mt-1">تیم ۳ نفره - مدت ۳ ماه</p>
+                <!-- Scenario 1 (2D) -->
+                <div class="glass-morphism rounded-3xl p-6 reveal transition-all duration-300 hover:border-gray-500">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+                        <h3 class="text-xl font-bold text-white">سناریو ۱: دوبعدی</h3>
+                        <span class="bg-gray-800 text-gray-300 px-3 py-1 rounded-lg text-xs">۳ ماه</span>
                     </div>
-                    
-                    <div class="p-5 flex-grow">
-                        <div class="text-center mb-6">
-                            <span class="text-4xl font-extrabold text-white">۵۰۴</span>
-                            <span class="text-gray-400 text-sm">میلیون تومان</span>
+                    <div class="text-center mb-8">
+                        <div class="text-4xl font-bold text-white">۵۰۴</div>
+                        <div class="text-sm text-gray-500 mt-1">میلیون تومان</div>
+                    </div>
+                    <div class="space-y-2 bg-black/20 p-4 rounded-xl">
+                        <div class="cost-row">
+                            <span class="text-gray-300">برنامه‌نویسی (ارشد)</span>
+                            <span class="text-white font-mono">270,000,000</span>
                         </div>
-
-                        <!-- جدول ریز هزینه -->
-                        <div class="bg-gray-900/60 rounded-xl p-4 border border-gray-600/50">
-                            <h4 class="text-xs font-bold text-gray-400 mb-2 border-b border-gray-700 pb-2">ریز هزینه‌ها (مدت ۳ ماه)</h4>
-                            
-                            <div class="cost-row">
-                                <span class="text-gray-300">برنامه‌نویس ارشد Unity</span>
-                                <span class="font-mono text-gray-400 text-xs">60م × 3 ماه = <span class="text-white">180</span></span>
-                            </div>
-                            <div class="cost-row">
-                                <span class="text-gray-300">گرافیست و UI</span>
-                                <span class="font-mono text-gray-400 text-xs">40م × 3 ماه = <span class="text-white">120</span></span>
-                            </div>
-                            <div class="cost-row">
-                                <span class="text-gray-300">مدیر پروژه</span>
-                                <span class="font-mono text-gray-400 text-xs">40م × 3 ماه = <span class="text-white">120</span></span>
-                            </div>
-                            <div class="cost-row mt-2 pt-2 border-t border-gray-700 text-yellow-500 font-bold">
-                                <span>بافر پروژه (20%)</span>
-                                <span class="font-mono">84</span>
-                            </div>
+                        <div class="cost-row">
+                            <span class="text-gray-300">طراحی هنری (UI/UX + Art)</span>
+                            <span class="text-white font-mono">150,000,000</span>
                         </div>
-
-                        <div class="mt-4">
-                            <h4 class="text-xs font-bold text-gray-500 mb-1">مشخصات فنی:</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                • موتور Unity 2D<br>
-                                • خروجی بسیار سبک<br>
-                                • استفاده از AI برای اسپرایت‌ها
-                            </p>
+                        <div class="cost-row border-t border-gray-600 mt-2 pt-2">
+                            <span class="text-yellow-500">بافر (ریسک ۲۰٪)</span>
+                            <span class="text-yellow-500 font-mono">84,000,000</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- سناریو ۳: پیشنهاد ویژه -->
-                <div class="glass-panel rounded-3xl overflow-hidden flex flex-col border border-accentGreen transform scale-105 z-10 shadow-2xl shadow-green-900/20">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-600"></div>
-                    <div class="p-6 bg-gradient-to-b from-green-900/30 to-gray-900 border-b border-gray-700 relative">
-                        <div class="absolute top-3 left-3 bg-accentGreen text-black text-[10px] font-bold px-2 py-0.5 rounded">پیشنهاد ما</div>
-                        <h3 class="text-xl font-bold text-white">سناریو ۳: سه‌بعدی آماده</h3>
-                        <p class="text-xs text-green-300 mt-1">تیم ۳ نفره - مدت ۳ ماه</p>
-                    </div>
+                <!-- Scenario 3 (Recommended) - Featured -->
+                <div class="relative transform lg:-translate-y-6 reveal transition-all duration-500 hover:scale-[1.02]">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-[26px] blur opacity-40 animate-pulse"></div>
                     
-                    <div class="p-6 flex-grow">
-                        <div class="text-center mb-6">
-                            <span class="text-5xl font-extrabold text-accentGreen neon-text">۴۹۲</span>
-                            <span class="text-gray-400 text-sm">میلیون تومان</span>
+                    <div class="relative glass-morphism bg-[#111927] rounded-3xl p-8 border-t-4 border-accentGreen shadow-2xl">
+                        <div class="absolute top-4 left-4">
+                            <span class="flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                            </span>
+                        </div>
+                        
+                        <div class="flex flex-col items-center mb-6">
+                            <span class="text-accentGreen text-xs font-bold uppercase tracking-wider mb-2">پیشنهاد ویژه و سریع</span>
+                            <h3 class="text-2xl font-bold text-white">سناریو ۳: سه‌بعدی آماده</h3>
+                            <span class="mt-2 bg-accentGreen/10 text-accentGreen border border-accentGreen/20 px-4 py-1 rounded-full text-sm font-bold">زمان: ۲.۵ ماه</span>
                         </div>
 
-                        <!-- جدول ریز هزینه -->
-                        <div class="bg-green-900/20 rounded-xl p-4 border border-green-500/30">
-                            <h4 class="text-xs font-bold text-green-400 mb-2 border-b border-green-500/20 pb-2">ریز هزینه‌ها (مدت ۳ ماه)</h4>
-                            
-                            <div class="cost-row text-gray-300">
-                                <span>برنامه‌نویس ارشد (Lead)</span>
-                                <span class="font-mono text-gray-400 text-xs">60م × 3 ماه = <span class="text-white">180</span></span>
+                        <div class="text-center mb-8 relative">
+                            <div class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500">۳۸۴</div>
+                            <div class="text-sm text-gray-400 mt-2 font-bold">میلیون تومان (تمام شده)</div>
+                        </div>
+
+                        <div class="space-y-3 bg-gradient-to-b from-gray-800/40 to-black/40 p-5 rounded-2xl border border-gray-700/50">
+                            <div class="cost-row">
+                                <span class="text-cyan-100 font-medium">برنامه‌نویسی کامل (ارشد + میدل)</span>
+                                <span class="text-white font-mono font-bold text-lg">300,000,000</span>
                             </div>
-                            <div class="cost-row text-gray-300">
-                                <span>برنامه‌نویس میدل</span>
-                                <span class="font-mono text-gray-400 text-xs">30م × 3 ماه = <span class="text-white">90</span></span>
+                            <div class="cost-row">
+                                <span class="text-blue-300">هزینه خرید Asset و لایسنس‌ها</span>
+                                <span class="text-white font-mono">20,000,000</span>
                             </div>
-                            <div class="cost-row text-gray-300">
-                                <span>مدیر پروژه</span>
-                                <span class="font-mono text-gray-400 text-xs">40م × 3 ماه = <span class="text-white">120</span></span>
-                            </div>
-                            <div class="cost-row text-blue-400">
-                                <span>خرید Asset و لایسنس</span>
-                                <span class="font-mono text-white">20</span>
-                            </div>
-                            <div class="cost-row mt-2 pt-2 border-t border-green-500/30 text-yellow-500 font-bold">
-                                <span>بافر پروژه (20%)</span>
-                                <span class="font-mono">82</span>
+                            <div class="cost-row border-t border-gray-600 mt-2 pt-2">
+                                <span class="text-yellow-400 font-bold">بافر پروژه (۲۰٪)</span>
+                                <span class="text-yellow-400 font-mono font-bold">64,000,000</span>
                             </div>
                         </div>
                         
-                         <div class="mt-4">
-                            <h4 class="text-xs font-bold text-gray-500 mb-1">مشخصات فنی:</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                • موتور Unity 3D URP<br>
-                                • گرافیک سه‌بعدی با هزینه دوبعدی<br>
-                                • لول دیزاین دستی با Assetهای آماده
-                            </p>
-                        </div>
                     </div>
                 </div>
 
-                <!-- سناریو ۲: اختصاصی -->
-                <div class="glass-panel rounded-3xl overflow-hidden flex flex-col hover:border-purple-500 transition-all duration-300">
-                    <div class="p-5 bg-gradient-to-l from-gray-800 to-purple-900/20 border-b border-gray-700">
-                        <h3 class="text-xl font-bold text-white">سناریو ۲: سه‌بعدی اختصاصی</h3>
-                        <p class="text-xs text-purple-300 mt-1">تیم ۴ نفره - مدت ۴.۵ ماه</p>
+                <!-- Scenario 2 (Custom) -->
+                <div class="glass-morphism rounded-3xl p-6 reveal transition-all duration-300 hover:border-purple-500">
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+                        <h3 class="text-xl font-bold text-white">سناریو ۲: اختصاصی</h3>
+                        <span class="bg-purple-900/30 text-purple-200 border border-purple-500/30 px-3 py-1 rounded-lg text-xs">۴.۵ ماه</span>
                     </div>
-                    
-                    <div class="p-5 flex-grow">
-                        <div class="text-center mb-6">
-                            <span class="text-4xl font-extrabold text-accentPurple">۹۱۸</span>
-                            <span class="text-gray-400 text-sm">میلیون تومان</span>
+                    <div class="text-center mb-8">
+                        <div class="text-4xl font-bold text-white">۸۶۴</div>
+                        <div class="text-sm text-gray-500 mt-1">میلیون تومان</div>
+                    </div>
+                    <div class="space-y-2 bg-black/20 p-4 rounded-xl">
+                        <div class="cost-row">
+                            <span class="text-gray-300">تیم فنی و توسعه</span>
+                            <span class="text-white font-mono">540,000,000</span>
                         </div>
-
-                        <!-- جدول ریز هزینه -->
-                        <div class="bg-purple-900/10 rounded-xl p-4 border border-purple-500/30">
-                            <h4 class="text-xs font-bold text-purple-400 mb-2 border-b border-purple-500/20 pb-2">ریز هزینه‌ها (مدت ۴.۵ ماه)</h4>
-                            
-                            <div class="cost-row text-gray-300">
-                                <span>Lead Developer</span>
-                                <span class="font-mono text-gray-400 text-xs">60م × 4.5 ماه = <span class="text-white">270</span></span>
-                            </div>
-                            <div class="cost-row text-gray-300">
-                                <span>Mid Developer</span>
-                                <span class="font-mono text-gray-400 text-xs">30م × 4.5 ماه = <span class="text-white">135</span></span>
-                            </div>
-                            <div class="cost-row text-gray-300">
-                                <span>3D Artist & Animator</span>
-                                <span class="font-mono text-gray-400 text-xs">40م × 4.5 ماه = <span class="text-white">180</span></span>
-                            </div>
-                            <div class="cost-row text-gray-300">
-                                <span>مدیر پروژه</span>
-                                <span class="font-mono text-gray-400 text-xs">40م × 4.5 ماه = <span class="text-white">180</span></span>
-                            </div>
-                            <div class="cost-row mt-2 pt-2 border-t border-purple-500/30 text-yellow-500 font-bold">
-                                <span>بافر پروژه (20%)</span>
-                                <span class="font-mono">153</span>
-                            </div>
+                        <div class="cost-row">
+                            <span class="text-gray-300">تیم مدل‌سازی 3D & Animation</span>
+                            <span class="text-white font-mono">180,000,000</span>
                         </div>
-
-                        <div class="mt-4">
-                            <h4 class="text-xs font-bold text-gray-500 mb-1">مشخصات فنی:</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                • مدل‌سازی Low Poly اختصاصی<br>
-                                • مالکیت معنوی ۱۰۰٪ برای NFT<br>
-                                • انیمیشن‌های اختصاصی
-                            </p>
+                        <div class="cost-row border-t border-gray-600 mt-2 pt-2">
+                            <span class="text-yellow-500">بافر (ریسک ۲۰٪)</span>
+                            <span class="text-yellow-500 font-mono">144,000,000</span>
                         </div>
                     </div>
                 </div>
@@ -296,73 +294,87 @@
             </div>
         </section>
 
-        <!-- جدول مقایسه (بدون ریسک فنی) -->
-        <section class="glass-panel rounded-2xl p-8 overflow-x-auto">
-            <h3 class="text-xl font-bold mb-6 text-white border-r-4 border-accentBlue pr-3">مقایسه نهایی شاخص‌ها</h3>
-            <table class="w-full text-right border-collapse min-w-[700px]">
-                <thead>
-                    <tr class="text-gray-400 text-sm border-b border-gray-700">
-                        <th class="py-4 px-6">شاخص</th>
-                        <th class="py-4 px-6 text-center">سناریو ۱ (2D)</th>
-                        <th class="py-4 px-6 text-center text-accentPurple bg-purple-900/10 border-t border-x border-purple-500/20 rounded-t-lg">سناریو ۲ (Custom 3D)</th>
-                        <th class="py-4 px-6 text-center text-accentGreen bg-green-900/10 border-t border-x border-green-500/20 rounded-t-lg">سناریو ۳ (Ready 3D)</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-300 text-sm">
-                    <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
-                        <td class="py-4 px-6 font-bold">هزینه نهایی</td>
-                        <td class="py-4 px-6 text-center">۵۰۴ میلیون</td>
-                        <td class="py-4 px-6 text-center bg-purple-900/5 border-x border-purple-500/10 font-bold">۹۱۸ میلیون</td>
-                        <td class="py-4 px-6 text-center bg-green-900/5 border-x border-green-500/10 font-bold text-accentGreen">۴۹۲ میلیون</td>
-                    </tr>
-                    <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
-                        <td class="py-4 px-6 font-bold">مدت زمان</td>
-                        <td class="py-4 px-6 text-center">۳ ماه</td>
-                        <td class="py-4 px-6 text-center bg-purple-900/5 border-x border-purple-500/10">۴.۵ ماه</td>
-                        <td class="py-4 px-6 text-center bg-green-900/5 border-x border-green-500/10 text-accentGreen">۳ ماه</td>
-                    </tr>
-                    <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
-                        <td class="py-4 px-6 font-bold">پتانسیل NFT</td>
-                        <td class="py-4 px-6 text-center text-gray-500">ضعیف</td>
-                        <td class="py-4 px-6 text-center bg-purple-900/5 border-x border-purple-500/10 text-accentPurple font-bold">بسیار عالی (یونیک)</td>
-                        <td class="py-4 px-6 text-center bg-green-900/5 border-x border-green-500/10 text-red-400">محدود (لایسنس)</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Comparison Table -->
+        <section class="reveal">
+            <div class="glass-morphism rounded-3xl p-8 overflow-x-auto shadow-2xl">
+                <h3 class="text-xl font-bold mb-6 text-white border-r-4 border-accentGreen pr-4">مقایسه نهایی شاخص‌ها</h3>
+                <table class="w-full text-right border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="text-gray-400 text-sm border-b border-gray-700/50">
+                            <th class="py-4 px-6">شاخص</th>
+                            <th class="py-4 px-6 text-center text-gray-400">سناریو ۱ (2D)</th>
+                            <th class="py-4 px-6 text-center text-accentPurple bg-purple-900/10 rounded-t-lg">سناریو ۲ (Custom)</th>
+                            <th class="py-4 px-6 text-center text-accentGreen bg-cyan-900/10 rounded-t-lg border-b-2 border-accentGreen">سناریو ۳ (Ready)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300 text-sm">
+                        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition">
+                            <td class="py-5 px-6 font-bold text-white">هزینه نهایی</td>
+                            <td class="py-5 px-6 text-center">۵۰۴ میلیون</td>
+                            <td class="py-5 px-6 text-center font-bold">۸۶۴ میلیون</td>
+                            <td class="py-5 px-6 text-center font-extrabold text-2xl text-accentGreen bg-cyan-900/5">۳۸۴ میلیون</td>
+                        </tr>
+                        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition">
+                            <td class="py-5 px-6 font-bold text-white">مدت زمان</td>
+                            <td class="py-5 px-6 text-center">۳ ماه</td>
+                            <td class="py-5 px-6 text-center">۴.۵ ماه</td>
+                            <td class="py-5 px-6 text-center text-white bg-cyan-900/5"><span class="bg-green-600 px-2 py-1 rounded text-xs">۲.۵ ماه</span></td>
+                        </tr>
+                        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition">
+                            <td class="py-5 px-6 font-bold text-white">قابلیت NFT</td>
+                            <td class="py-5 px-6 text-center text-gray-500">ضعیف</td>
+                            <td class="py-5 px-6 text-center text-accentPurple font-bold">عالی (یونیک)</td>
+                            <td class="py-5 px-6 text-center text-red-400 bg-cyan-900/5">محدود</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
     </main>
 
-    <!-- فوتر با اطلاعات تماس -->
-    <footer class="bg-black/50 border-t border-gray-800 pt-12 pb-8">
+    <!-- Footer -->
+    <footer class="mt-20 border-t border-gray-800 bg-[#080b12] py-12">
         <div class="container mx-auto px-4 text-center">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-white mb-1">Good Villain</h2>
-                <p class="text-xs text-gray-500 uppercase tracking-widest">Game Development Studio</p>
-            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">Good Villain</h2>
+            <p class="text-gray-500 text-sm tracking-[0.2em] uppercase mb-8">Game Development Studio</p>
             
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8 mb-8">
-                
-                <!-- دکمه تماس در فوتر -->
-                <a href="tel:09212795139" class="group relative px-8 py-4 bg-gray-800 rounded-full border border-gray-700 hover:border-accentGreen hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all duration-300">
-                    <div class="text-xs text-gray-400 mb-1 group-hover:text-white">شماره تماس مستقیم</div>
-                    <div class="text-xl font-bold text-accentGreen dir-ltr flex items-center gap-2">
-                        <i class="fa-solid fa-phone-flip animate-pulse"></i>
-                        0921 279 5139
+            <div class="flex justify-center items-center gap-10">
+                <a href="tel:09212795139" class="group flex items-center gap-4 bg-gray-800/50 px-8 py-4 rounded-2xl border border-gray-700 hover:border-accentGreen transition-all">
+                    <div class="bg-gray-700 p-3 rounded-full group-hover:bg-accentGreen group-hover:text-black transition-colors">
+                        <i class="fa-solid fa-phone text-xl"></i>
+                    </div>
+                    <div class="text-xl font-bold text-white dir-ltr mt-1">
+                        <span dir="ltr">0921 279 5139</span>
                     </div>
                 </a>
-
-                <div class="text-center">
-                    <div class="text-sm text-gray-400 mb-1">مدیر پروژه</div>
-                    <div class="text-xl font-bold text-white">مهرداد مرادی</div>
-                </div>
             </div>
-
-            <div class="text-gray-600 text-sm">
-                &copy; 1404 Good Villain. All Rights Reserved.
+            
+            <div class="mt-10 text-gray-600 text-xs">
+                &copy; 1404 All Rights Reserved.
             </div>
         </div>
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                const elementVisible = 100;
+
+                reveals.forEach((reveal) => {
+                    const elementTop = reveal.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveal.classList.add('active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+        });
+    </script>
 </body>
 </html>
